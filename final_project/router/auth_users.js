@@ -11,8 +11,9 @@ const isValid = (username) => {
 };
 
 const authenticatedUser = (username, password) => {
-  //returns boolean
-  //write code to check if username and password match the one we have in records.
+  return !!regd_users.find(
+    (user) => user.username === username && user.password === password
+  );
 };
 
 //only registered users can login
@@ -48,8 +49,25 @@ regd_users.post("/login", (req, res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  // user already auth'd by this point
+
+  const isbn = req.params.isbn;
+  if (!books[isbn]) {
+    return res
+      .status(404)
+      .json({ message: "Book with isbn " + isbn + " not found" });
+  }
+
+  const review = req.body.review;
+  if (!review) {
+    return res.status(200).json({ message: "Review is required" });
+  }
+
+  const username = req.user.data.username;
+  const action = !!books[isbn].reviews[username] ? "updated" : "created";
+
+  books[isbn].reviews[username] = review;
+  return res.status(200).json({ message: "Review was " + action });
 });
 
 module.exports.authenticated = regd_users;
