@@ -62,14 +62,24 @@ public_users.get("/author/:author", function (req, res) {
   if (!author) {
     return res.status(404).json({ message: "Author required" });
   }
-  const authorBooks = [];
-  Object.keys(books).map((isbn) => {
-    let book = books[isbn];
-    if (book.author === author) {
-      authorBooks.push({ isbn, ...book });
-    }
+
+  // task 12: use promise/callback for author search
+  let myPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const authorBooks = [];
+      Object.keys(books).map((isbn) => {
+        let book = books[isbn];
+        if (book.author === author) {
+          authorBooks.push({ isbn, ...book });
+        }
+      });
+      resolve(authorBooks);
+    }, 2000);
   });
-  res.send(authorBooks);
+
+  myPromise.then((authorBooks) => {
+    res.send(authorBooks);
+  });
 });
 
 // Get all books based on title
