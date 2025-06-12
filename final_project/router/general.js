@@ -89,13 +89,24 @@ public_users.get("/title/:title", function (req, res) {
     return res.status(404).json({ message: "Title required" });
   }
   const titleBooks = [];
-  Object.keys(books).map((isbn) => {
-    let book = books[isbn];
-    if (book.title === title) {
-      titleBooks.push({ isbn, ...book });
-    }
+
+  // task 13: use promise/callback for title search
+  let myPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const titleBooks = [];
+      Object.keys(books).map((isbn) => {
+        let book = books[isbn];
+        if (book.title === title) {
+          titleBooks.push({ isbn, ...book });
+        }
+      });
+      resolve(titleBooks);
+    }, 2000);
   });
-  res.send(titleBooks);
+
+  myPromise.then((titleBooks) => {
+    res.send(titleBooks);
+  });
 });
 
 //  Get book review
