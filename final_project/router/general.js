@@ -37,10 +37,23 @@ public_users.get("/isbn/:isbn", function (req, res) {
   if (!isbn) {
     return res.status(404).json({ message: "ISBN required" });
   }
-  if (!Object.keys(books).includes(isbn)) {
+
+  // task 11: use promise/callback for isbn search
+  let myPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (!Object.keys(books).includes(isbn)) {
+        resolve(null);
+      }
+      resolve(books[isbn]);
+    }, 2000);
+  });
+
+  myPromise.then((book) => {
+    if (book) {
+      return res.send(book);
+    }
     return res.status(404).json({ message: "ISBN " + isbn + " not found" });
-  }
-  res.send(books[isbn]);
+  });
 });
 
 // Get book details based on author
